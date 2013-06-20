@@ -1,5 +1,5 @@
 #!/usr/bin/env rake
-
+require 'chef/knife/cookbook_test'
 
 task :default => 'foodcritic'
 
@@ -16,8 +16,11 @@ end
 desc "Runs knife cookbook test"
 task :knife do
   Rake::Task[:prepare_sandbox].execute
+  Chef::Config[:syntax_check_cache_path] = ::File.absolute_path(::File.join(sandbox_path, "../", "../"))
+  tester = ::Chef::Knife::CookbookTest.new()
+  tester.config[:cookbook_path] = ::File.absolute_path(::File.join(sandbox_path, "../"))
+  tester.run()
 
-  sh "bundle exec knife cookbook test cookbook -o #{sandbox_path}/../"
 end
 task :prepare_sandbox do
   files = %w{*.md *.rb attributes definitions files providers recipes resources templates}
