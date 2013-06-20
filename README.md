@@ -1,4 +1,5 @@
 # Zenoss Client Cookbook
+[![Build Status](https://secure.travis-ci.org/ZCA/zenoss_client-chef-cookbook.png)](http://travis-ci.org/[ZCA/zenoss_client-chef-cookbook)
 The zenoss_client cookbook is intended to replace the functionality that used 
 to reside in the client recipe of the [Zenoss cookbook](http://community.opscode.com/cookbooks/zenoss). 
 In anticipation of  updates to that cookbook to support Core 4, the client 
