@@ -1,5 +1,7 @@
 #!/usr/bin/env rake
 require 'chef/knife/cookbook_test'
+require 'chef/cookbook_loader'
+require 'chef/cookbook/syntax_check'
 
 task :default => 'foodcritic'
 
@@ -19,6 +21,7 @@ task :knife do
   Chef::Config[:syntax_check_cache_path] = ::File.absolute_path(::File.join(sandbox_path, "../", "../"))
   tester = ::Chef::Knife::CookbookTest.new()
   tester.config[:cookbook_path] = ::File.absolute_path(::File.join(sandbox_path, "../"))
+  tester.name_args=['cookbook']
   tester.run()
 
 end
