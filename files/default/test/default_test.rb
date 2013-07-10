@@ -10,13 +10,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-MiniTest::Chef::Resources.register_resource(:chef_gem)
 
 def user_name(node)
   return node['zenoss']['client']['local_user_name']
 end
 
 describe_recipe 'zenoss_client::default' do
+  include Zenoss::Client::Test::Helper
+  MiniTest::Chef::Resources.register_resource(:chef_gem)
   describe "users" do
     it "creates a local zenoss user when requested" do
       skip "Local user creation disabled" unless node['zenoss']['client']['create_local_user'] == true

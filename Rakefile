@@ -2,8 +2,10 @@
 require 'chef/knife/cookbook_test'
 require 'chef/cookbook_loader'
 require 'chef/cookbook/syntax_check'
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new('spec')
 
-task :default => 'foodcritic'
+task :default => 'test'
 
 desc "Runs foodcritic linter"
 task :foodcritic do
@@ -31,6 +33,10 @@ task :prepare_sandbox do
   rm_rf sandbox_path
   mkdir_p sandbox_path
   cp_r Dir.glob("{#{files.join(',')}}"), sandbox_path
+end
+
+desc "Run all tests"
+task :test => [:foodcritic, :knife, :spec] do
 end
 
 

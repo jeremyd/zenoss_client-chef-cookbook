@@ -13,8 +13,14 @@
 require 'minitest/spec'
 require 'minitest-chef-handler'
 
-include MiniTest::Chef::Assertions
-include MiniTest::Chef::Context
-include MiniTest::Chef::Resources
-
-MiniTest::Chef::Resources.register_resource(:chef_gem)
+module Zenoss
+  module Client
+    module Test
+      module Helper
+        include MiniTest::Chef::Assertions
+        include MiniTest::Chef::Context
+        include MiniTest::Chef::Resources
+      end
+    end
+  end
+end
