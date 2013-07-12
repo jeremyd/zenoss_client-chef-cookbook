@@ -140,8 +140,6 @@ Example 3: Delete **this** node
       api_password "MyZenossAPIPassword"
     end
 
-### Attributes
-
 ## Authors
 Author:: David Petzel (davidpetzel@gmail.com)
 
