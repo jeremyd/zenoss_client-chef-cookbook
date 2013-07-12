@@ -37,6 +37,12 @@ default['zenoss']['client']['collector'] = "localhost"
 # than nil, this value will trump other detection methods
 default['zenoss']['client']['server'] = nil
 
+# The HTTP port on which your Zenoss Server listening. This should
+# be used if youare running under Chef-solo, or for some other reason
+# are able to locate this via search. If this value is anything other
+# than nil, this value will trump other detection methods
+default['zenoss']['client']['server_port'] = nil
+
 # What version of the zenoss_client rubygem do we want to use
 default['zenoss']['client']['gem_version'] = "0.5.4"
 

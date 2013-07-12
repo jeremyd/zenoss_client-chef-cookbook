@@ -12,6 +12,10 @@ Additionally by splitting out the client components, we are laying the
 groundwork to later add some support for nodes to self-register using the 
 JSON API.
 
+As of 1.1.0 a new LWRP was introduced which will allow nodes to register
+themselves with a Zenoss server using the JSON API. Please see the details
+on the LWRP below
+
 ## Requirements
 This cookbook will need access to rubygems.org, or your node must be
 pre-configured with a gem source that mirrors rubygems.org
@@ -31,6 +35,112 @@ the available attributes
 
 ## Recipes
 Currently the only recipe that exists is the default recipe
+
+## LWRP: zenoss_client
+The Zenoss Client LWRP can be used to to register nodes on a Zenoss server.
+The primary use case is for nodes to register themselves as part of the
+bootstrap process, however the LWRP is constructed in such a way that you could
+register other nodes as well (i.e. using nodes discovered via search on a 
+central node somewhere).
+
+### Usage
+The LWRP makes use of the [zenoss_client gem](http://rubygems.org/gems/zenoss_client)
+to communicate with the JSON API. The default recipe in this cookbook will 
+handle installing the gem. It is important that you 
+`include_recipe "zenoss_client"` before attempting to call the LWRP.
+
+Alternatively you if don't want to run the default recipe for some reason you
+will need to handle the `chef_gem "zenoss_client"` installation yourself
+somewhere in your run_list prior to calling the LWRP.
+
+#### Actions
+* `:add` - Add/register a node with a Zenoss Server. **Default**
+* `delete` - Delete a node from a Zenoss Server
+
+#### Attributes
+* `device_title` - The display name or title as displayed in the Zenoss UI
+  * Type: *String*
+  * Default: Name Attribute of the Resource
+* `api_host` - The host/ip of your Zenoss API. Generally this will be your Zenoss
+  server name, however if you're running Zenoss behind a VIP or something along
+  those lines, you could put that here  
+  * Type: *String*
+  * Default: `node['zenoss']['client']['server'] `
+* `api_port` - The HTTP port of your Zenoss API.
+  * Type: *Integer*
+  * Default: `node['zenoss']['client']['server_port']`
+* `api_user` **Required** - The username to use for API authentication
+  * Type: *String*
+  * Default: *nil*
+* `api_password` **Required** - The password to use for API authentication
+  * Type: *String*
+  * Default: *nil*
+* `api_protocol` - The protocol/scheme to use for API communications. Must be
+  either *http* or *https*
+  * Type: *String*
+  * Default: http
+* `wait_for` - The amount of time to wait for confirmation that the device has 
+  been added. When you add a device via the API, a background job is queued
+  and Zenoss will try and collect some basic information about the node.
+  Generally, this is a fairly fast operation, but depending on your network
+  this might take longer. The default behavior of the LWRP will is to 
+  **fire and forget**. That means as soon as the JSON API responds that the 
+  background job has been queued, the run will continue. Setting a value for
+  this will result in the run **blocking** until the node is registered or
+  the amount of elapsed time exceeds this value
+  * Type: *Integer*
+  * Default: 0
+* `ip` - The IP that is to be set as the manage IP of the device
+  * Type: *String*
+  * Default: `node['ipaddress']`
+* `collector` - The collector aka 'remote collector' that the device should be
+  assigned to.
+  * Type: *String*
+  * Default: "localhost"
+* `device_class` - The Device Class that the node should get put in
+  * Type: *String*
+  * Default: "/Devices/Server"
+* `comments` - Comments to put on the Device
+  * Type: *default*
+  * Default: ""
+
+### Examples
+The [testing recipe](https://github.com/ZCA/zenoss_client-chef-cookbook/tree/master/test/cookbooks/zenoss_client_test/recipes/client_lwrp.rb)
+used to test this cookbook is a good place to look for example usages, but here
+are a couple of examples.
+
+Example 1: Register **this** node
+
+    # Use the 'fire and forget' method, and don't wait for confirmation
+    zenoss_client node.name do
+      action :add
+      api_user "MyZenossAPIUser"
+      api_password "MyZenossAPIPassword"
+    end
+
+Example 2: Register some other node
+
+    # Register a new node name 'TestDevice1'.
+    # Wait **up to** 120 seconds for the node to be registered
+    # Register the device with a management IP of 1.1.1.1
+    zenoss_client "TestDevice1" do
+      action :add
+      api_user "MyZenossAPIPassword"
+      api_password node['zenoss']['client']['test']['api_password']
+      wait_for 120
+      ip  "1.1.1.1"
+    end
+
+Example 3: Delete **this** node
+
+    # Delete *this* node
+    zenoss_client node.name do
+      action :delete
+      api_user "MyZenossAPIUser"
+      api_password "MyZenossAPIPassword"
+    end
+
+### Attributes
 
 ## Authors
 Author:: David Petzel (davidpetzel@gmail.com)

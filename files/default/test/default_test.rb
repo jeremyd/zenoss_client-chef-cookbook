@@ -10,6 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require_relative './test_helper'
 
 def user_name(node)
   return node['zenoss']['client']['local_user_name']

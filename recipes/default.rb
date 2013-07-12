@@ -17,6 +17,7 @@
 
 # Lets try and locate the zenoss server responsible for this node
 server = nil
+pubkey = ""
 if node['zenoss']['client']['server'].nil?
   if Chef::Config["solo"]
     Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
@@ -24,6 +25,18 @@ if node['zenoss']['client']['server'].nil?
     servers = search(:node, 'recipes:zenoss\:\:server') || []
     if servers.length > 0
       server = servers.first
+      
+      # Get the public key from search if its available
+      unless server.nil?
+        if server.attribute?("zenoss")
+         if server['zenoss'].attribute?('server')
+           if server['zenoss']['server'].attribute?('zenoss_pubkey')
+             pubkey = zenoss["server"]["zenoss_pubkey"]
+           end
+         end
+        end
+      end
+      
     end
   end
 else
@@ -41,18 +54,6 @@ if node['zenoss']['client']['create_local_user'] == true
     action :create
   end
  
-  # Get the public key from search if its available
-  pubkey = ""
-  unless server.nil?
-    if server.attribute?("zenoss")
-     if server['zenoss'].attribute?('server')
-       if server['zenoss']['server'].attribute?('zenoss_pubkey')
-         pubkey = zenoss["server"]["zenoss_pubkey"]
-       end
-     end
-    end
-  end
-  
   # Now create the ssh authorized keys on those os's that support it
   unless node['os'] == "windows"
     ssh_dir = ::File.join(node['zenoss']['client']['local_user_homedir'], ".ssh")

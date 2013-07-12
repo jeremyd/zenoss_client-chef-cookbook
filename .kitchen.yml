@@ -46,11 +46,15 @@ platforms:
     box: opscode-centos-5.9
     box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_centos-5.9_provisionerless.box
     require_chef_omnibus: true
-    
 
 suites:
 - name: zenoss_client
   run_list: 
   - recipe[minitest-handler]
-  - recipe[zenoss_client]
-  attributes: {}
+  - recipe[zenoss_client_test::client_lwrp]
+  attributes:
+    zenoss:
+      client:
+        server: "192.168.1.1" # TODO come up with something better than hard coding a zenoss server for testing
+        server_port: 8080
+        
