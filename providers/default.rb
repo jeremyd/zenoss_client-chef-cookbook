@@ -1,13 +1,16 @@
 use_inline_resources if defined?(use_inline_resources)
 
+def get_ip
+  @new_resource.ip || node['ipaddress']
+end
+
 action :add do
   if @device.nil?
-      #ip_address = new_resource.ip || node['ipaddress']
       new_device_rsp = @connection.json_request(
         'DeviceRouter', 'addDevice', 
           [{:deviceName => @new_resource.name, 
           :deviceClass => new_resource.device_class,
-          :manageIp => new_resource.ip,
+          :manageIp => get_ip,
           :collector => new_resource.collector,
           :comments => new_resource.comments
           
@@ -41,6 +44,7 @@ action :add do
               # Do we mark this as updated??. Lets assume yes as I 
               # *think* thats going to cause less grief with people trying
               # to use notifications
+              break
               new_resource.updated_by_last_action(true)
             end
           end
@@ -63,7 +67,7 @@ action :delete do
     # figure out the hashcheck, which is for some reason
     # required to delete...
     hashcheck = @connection.json_request(
-      'DeviceRouter', 'getDevices',
+      'DeviceRouter', 'getDevices'
     )['hash']
     
     result = @connection.json_request(
@@ -99,7 +103,9 @@ end
   
 def api_url
   n = @new_resource
-  url = "#{n.api_protocol}://#{n.api_host}:#{n.api_port}/zport/dmd"
+  api_host = @new_resource.api_host || node['zenoss']['client']['server']
+  api_port = @new_resource.api_port || node['zenoss']['client']['server_port']
+  url = "#{n.api_protocol}://#{api_host}:#{api_port}/zport/dmd"
 end
 
 def get_device
