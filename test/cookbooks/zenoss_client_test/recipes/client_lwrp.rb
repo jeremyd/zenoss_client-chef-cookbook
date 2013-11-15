@@ -5,6 +5,11 @@
 # - to avoid race conditions with background add make heavy use of wait_for
 include_recipe "#{cookbook_name}::default" 
 
+if node['zenoss']['client']['test']['run_lwrp_tests'] == false
+  return
+end
+
+
 # Lets test creating a new device, and "blocking" the run until its
 # actually there
 zenoss_client "TestDevice1" do
