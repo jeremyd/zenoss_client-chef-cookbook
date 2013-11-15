@@ -37,6 +37,10 @@ default['zenoss']['client']['collector'] = "localhost"
 # than nil, this value will trump other detection methods
 default['zenoss']['client']['server'] = nil
 
+# If you explicitly set the value of ['zenoss']['client']['server']
+# you can also set zenoss's ssh public key with the following
+# default['zenoss']['client']['zenoss_pubkey'] = ""
+
 # The HTTP port on which your Zenoss Server listening. This should
 # be used if youare running under Chef-solo, or for some other reason
 # are able to locate this via search. If this value is anything other
