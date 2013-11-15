@@ -41,6 +41,7 @@ if node['zenoss']['client']['server'].nil?
   end
 else
   server = node['zenoss']['client']['server']
+  pubkey = node['zenoss']['client']['zenoss_pubkey'] || ""
 end
 
 if node['zenoss']['client']['create_local_user'] == true
