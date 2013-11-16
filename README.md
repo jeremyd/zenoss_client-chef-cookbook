@@ -14,7 +14,7 @@ JSON API.
 
 As of 1.1.0 a new LWRP was introduced which will allow nodes to register
 themselves with a Zenoss server using the JSON API. Please see the details
-on the LWRP below
+on the LWRP below.
 
 ## Requirements
 This cookbook will need access to rubygems.org, or your node must be
@@ -165,6 +165,34 @@ Centos 6.4, you could run `kitchen test zenoss-client-centos-64`. You can also
 use regular expression in place of the suite name to run a subset of all suites
 
 Currently the platforms and suite(s) are configured to provide test coverage
-of both Chef 10 and Chef 11
+of both Chef 10 and Chef 11.
 
+### Testing Setup
+In order to properly test this cookbook it needs to interact with a remote Zenoss server. It is suggested that you use the Zenoss cookbook to create a fresh Zenoss instance for testing. Once you have a test Zenoss server in place you should set the following environment variables, which test-kitchen will use to populate some node attribute used for testing:
+
+* `ZENOSS_CLIENT_SERVER`: This should be the IP for FQDN of the test Zenoss server you want to test against. If this is not set, test-kitchen will default to '127.0.0.1'
+* `ZENOSS_CLIENT_SERVER_PORT`: This is the port on which your test Zenoss server is running. If not set test-kitchen will default to 8080.
+* `ZENOSS_CLIENT_TEST_API_USER`: This is the user account that will be used to authenticate against the JSON API. If not set a default of 'admin' will be used.
+* `ZENOSS_CLIENT_TEST_API_PASSWORD`: This is the password that will be used to authenticate against the JSON API. If not set a default of 'zenoss' will be used
+
+
+## Releasing
+This cookbook uses an 'even number' release strategy. The version number in master
+will always be an odd number indicating development, and an even number will
+be used when an official build is released.
+
+Come release time here is the checklist:
+
+* Ensure the `metadata.rb` reflects the proper *even* numbered release
+* Ensure there is a *dated* change log entry in `CHANGELOG.md`
+* Commit all the changes
+* Ensure a git tag has applied in the format of v#.#.# (git tag -a v#.#.# -m 'v#.#.#')
+* Commit and push including tags (`git push upstream master --tags`)
+* Share the cookbook to the community site
+  `knife cookbook site share zenoss_client 'Monitoring & Trending' -o ../`
+* Bump the version in metadata.rb to the next *patch level* odd number
+
+## Contributors
+
+* sfiggins <stephen.figgins@gmail.com>
 
