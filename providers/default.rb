@@ -12,7 +12,8 @@ action :add do
           :deviceClass => new_resource.device_class,
           :manageIp => get_ip,
           :collector => new_resource.collector,
-          :comments => new_resource.comments
+          :comments => new_resource.comments,
+          :systemPaths => new_resource.system_paths
           
           }]
       )

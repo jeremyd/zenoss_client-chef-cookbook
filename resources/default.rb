@@ -13,4 +13,5 @@ attribute  :ip, :kind_of => String, :regex => /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3
 attribute :collector, :kind_of => String, :default => "localhost"
 attribute :device_class, :kind_of => String, :default => "/Devices/Server"
 attribute :comments, :kind_of => String, :default => ""
+attribute :system_paths, :kind_of => Array, :required => true
 
